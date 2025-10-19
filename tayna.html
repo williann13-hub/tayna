@@ -1,0 +1,1841 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIAP - Portal do Aluno</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-attachment: fixed;
+            line-height: 1.6;
+        }
+
+        /* Header Styles */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        .header-info h1 {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        .header-info p {
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .notification-btn {
+            position: relative;
+            padding: 0.5rem;
+            color: #6b7280;
+            background: none;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-btn:hover {
+            background: rgba(0,0,0,0.05);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            font-size: 0.7rem;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-details {
+            text-align: right;
+            display: none;
+        }
+
+        .user-details p:first-child {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .user-details p:last-child {
+            font-size: 0.7rem;
+            color: #6b7280;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Desktop Sidebar */
+        .desktop-sidebar {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 81px;
+            width: 280px;
+            height: calc(100vh - 81px);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            z-index: 90;
+            overflow-y: auto;
+        }
+
+        /* Mobile Bottom Navigation */
+        .mobile-nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+            padding: 1rem 0.5rem;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            border-radius: 20px 20px 0 0;
+            margin-top: 2rem;
+        }
+
+        .mobile-nav-content {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem 0.5rem;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 70px;
+            background: none;
+            border: none;
+            text-align: center;
+        }
+
+        .nav-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            transform: translateY(-4px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-item i {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-item span {
+            font-size: 0.75rem;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        /* Content Area */
+        .content {
+            padding: 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        /* Grid System */
+        .grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .grid-cols-1 {
+            grid-template-columns: 1fr;
+        }
+
+        .grid-cols-2 {
+            grid-template-columns: 1fr !important;
+        }
+
+        .grid-cols-4 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        /* Mobile-specific grid override */
+        @media (max-width: 767px) {
+            .grid-cols-2 {
+                grid-template-columns: 1fr !important;
+                gap: 1.5rem;
+            }
+        }
+
+        /* Hero Card */
+        .hero-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            padding: 2rem 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.3);
+        }
+
+        .hero-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .hero-title {
+            font-size: 1.6rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 0.95rem;
+        }
+
+        /* Metric Cards */
+        .metric-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .metric-label {
+            color: #6b7280;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .metric-value.green {
+            color: #10b981;
+        }
+
+        .metric-value.blue {
+            color: #3b82f6;
+        }
+
+        .metric-value.orange {
+            color: #f59e0b;
+        }
+
+        /* Profile Styles */
+        .profile-photo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .photo-container {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid rgba(255,255,255,0.8);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .photo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            background: #f9fafb;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* Table Styles */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .table th,
+        .table td {
+            padding: 1rem 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .table th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .table tr:hover {
+            background: #f8fafc;
+        }
+
+        .table .text-center {
+            text-align: center;
+        }
+
+        /* Status Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge.success {
+            background: linear-gradient(45deg, #10b981, #059669);
+            color: white;
+        }
+
+        .badge.danger {
+            background: linear-gradient(45deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .badge.warning {
+            background: linear-gradient(45deg, #f59e0b, #d97706);
+            color: white;
+        }
+
+        .badge.info {
+            background: linear-gradient(45deg, #3b82f6, #2563eb);
+            color: white;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 44px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #6b7280, #4b5563);
+            color: white;
+            box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn.text-xs {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+        }
+
+        /* Event Cards */
+        .event-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .event-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+
+        .event-item:hover {
+            background: #f1f5f9;
+            transform: translateY(-1px);
+        }
+
+        .event-info {
+            flex: 1;
+        }
+
+        .event-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+
+        .event-date {
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+
+        /* Financial Summary */
+        .financial-summary {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .summary-card {
+            padding: 1.5rem;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .summary-card.green {
+            background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+        }
+
+        .summary-card.red {
+            background: linear-gradient(135deg, #fef2f2, #fee2e2);
+        }
+
+        .summary-card.blue {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+        }
+
+        .summary-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .summary-label.green {
+            color: #065f46;
+        }
+
+        .summary-label.red {
+            color: #991b1b;
+        }
+
+        .summary-label.blue {
+            color: #1e3a8a;
+        }
+
+        .summary-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .summary-value.green {
+            color: #047857;
+        }
+
+        .summary-value.red {
+            color: #dc2626;
+        }
+
+        .summary-value.blue {
+            color: #1d4ed8;
+        }
+
+        /* Library Grid */
+        .library-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .material-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+
+        .material-card:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .material-header {
+            display: flex;
+            align-items: start;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .material-type {
+            background: linear-gradient(45deg, #3b82f6, #2563eb);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .material-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #1f2937;
+        }
+
+        .material-author {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-bottom: 0.25rem;
+        }
+
+        .material-subject {
+            font-size: 0.75rem;
+            color: #9ca3af;
+            margin-bottom: 1rem;
+        }
+
+        /* Contact Cards */
+        .contact-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            padding: 1.25rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            background: #fafafa;
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            background: #f1f5f9;
+            transform: translateY(-1px);
+        }
+
+        .contact-icon {
+            margin-right: 1rem;
+            padding: 0.75rem;
+            border-radius: 12px;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .contact-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .contact-detail {
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        /* FAQ */
+        .faq-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .faq-item {
+            padding: 1.25rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+
+        .faq-item:hover {
+            background: #f1f5f9;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .faq-question {
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        /* Search Bar */
+        .search-container {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            font-size: 0.9rem;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        /* Notes Summary */
+        .notes-summary {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(59, 130, 246, 0.1);
+        }
+
+        .notes-summary .grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            text-align: center;
+        }
+
+        /* Schedule Table */
+        .schedule-table {
+            font-size: 0.8rem;
+        }
+
+        .schedule-table th,
+        .schedule-table td {
+            padding: 0.75rem 0.5rem;
+        }
+
+        /* Utility Classes */
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .mt-6 { margin-top: 1.5rem; }
+        .text-center { text-align: center; }
+        .font-semibold { font-weight: 600; }
+        .font-bold { font-weight: bold; }
+        .text-sm { font-size: 0.875rem; }
+        .text-xs { font-size: 0.75rem; }
+        .text-lg { font-size: 1.125rem; }
+        .text-xl { font-size: 1.25rem; }
+        .text-2xl { font-size: 1.5rem; }
+        .text-3xl { font-size: 1.875rem; }
+        .w-full { width: 100%; }
+
+        /* Desktop Styles */
+        @media (min-width: 768px) {
+            .user-details {
+                display: block;
+            }
+            
+            .grid-cols-2 {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+            
+            .grid-cols-4 {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .form-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .form-group.full-width {
+                grid-column: span 2;
+            }
+            
+            .financial-summary {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .library-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .notes-summary .grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .mobile-nav {
+                display: none;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .mobile-nav {
+                display: none;
+            }
+            
+            .desktop-sidebar {
+                display: block;
+            }
+            
+            .content {
+                margin-left: 280px;
+                padding: 2rem;
+            }
+            
+            .library-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Desktop Navigation */
+        @media (min-width: 1024px) {
+            .desktop-nav-menu {
+                list-style: none;
+            }
+
+            .desktop-nav-item {
+                margin-bottom: 0.5rem;
+            }
+
+            .desktop-nav-link {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                padding: 1rem;
+                border-radius: 12px;
+                text-decoration: none;
+                color: #6b7280;
+                background: none;
+                border: none;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                font-size: 0.9rem;
+                font-weight: 500;
+            }
+
+            .desktop-nav-link:hover {
+                background: rgba(102, 126, 234, 0.1);
+                color: #667eea;
+            }
+
+            .desktop-nav-link.active {
+                background: linear-gradient(45deg, #667eea, #764ba2);
+                color: white;
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Touch-friendly improvements */
+        button, .btn, .nav-item, .faq-item, .contact-item, .material-card, .event-item {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="logo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Fiap-logo-novo.jpg" alt="FIAP Logo">
+                </div>
+                <div class="header-info">
+                    <h1>FIAP</h1>
+                    <p>Curso Técnico em Administração</p>
+                </div>
+            </div>
+            
+            <div class="header-right">
+                <button class="notification-btn">
+                    <i data-lucide="bell"></i>
+                    <span class="notification-badge">3</span>
+                </button>
+                
+                <div class="user-info">
+                    <div class="user-details">
+                        <p>TAYNA QUERO DA SILVA</p>
+                        <p>Técnico em Administração</p>
+                    </div>
+                    <div class="user-avatar">TQ</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Desktop Sidebar -->
+    <aside class="desktop-sidebar">
+        <nav>
+            <ul class="desktop-nav-menu">
+                <li class="desktop-nav-item">
+                    <button class="desktop-nav-link active" onclick="showSection('dashboard')">
+                        <i data-lucide="home"></i>
+                        Dashboard
+                    </button>
+                </li>
+                <li class="desktop-nav-item">
+                    <button class="desktop-nav-link" onclick="showSection('perfil')">
+                        <i data-lucide="user"></i>
+                        Meu Perfil
+                    </button>
+                </li>
+                <li class="desktop-nav-item">
+                    <button class="desktop-nav-link" onclick="showSection('notas')">
+                        <i data-lucide="book-open"></i>
+                        Notas
+                    </button>
+                </li>
+                <li class="desktop-nav-item">
+                    <button class="desktop-nav-link" onclick="showSection('financeiro')">
+                        <i data-lucide="credit-card"></i>
+                        Financeiro
+                    </button>
+                </li>
+                <li class="desktop-nav-item">
+                    <button class="desktop-nav-link" onclick="showSection('calendario')">
+                        <i data-lucide="calendar"></i>
+                        Calendário
+                    </button>
+                </li>
+                <li class="desktop-nav-item">
+                    <button class="desktop-nav-link" onclick="showSection('biblioteca')">
+                        <i data-lucide="library"></i>
+                        Biblioteca
+                    </button>
+                </li>
+                <li class="desktop-nav-item">
+                    <button class="desktop-nav-link" onclick="showSection('suporte')">
+                        <i data-lucide="mail"></i>
+                        Suporte
+                    </button>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-nav">
+        <div class="mobile-nav-content">
+            <button class="nav-item active" onclick="showSection('dashboard')">
+                <i data-lucide="home"></i>
+                <span>Início</span>
+            </button>
+            <button class="nav-item" onclick="showSection('perfil')">
+                <i data-lucide="user"></i>
+                <span>Perfil</span>
+            </button>
+            <button class="nav-item" onclick="showSection('notas')">
+                <i data-lucide="book-open"></i>
+                <span>Notas</span>
+            </button>
+            <button class="nav-item" onclick="showSection('financeiro')">
+                <i data-lucide="credit-card"></i>
+                <span>Financeiro</span>
+            </button>
+            <button class="nav-item" onclick="showSection('calendario')">
+                <i data-lucide="calendar"></i>
+                <span>Agenda</span>
+            </button>
+            <button class="nav-item" onclick="showSection('biblioteca')">
+                <i data-lucide="book"></i>
+                <span>Biblioteca</span>
+            </button>
+            <button class="nav-item" onclick="showSection('suporte')">
+                <i data-lucide="help-circle"></i>
+                <span>Suporte</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="content">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="content-section active">
+            <div class="hero-card">
+                <div class="hero-content">
+                    <div>
+                        <h2 class="hero-title">Olá, Tayna! 👋</h2>
+                        <p class="hero-subtitle">Técnico em Administração - 2º Semestre</p>
+                    </div>
+                    <i data-lucide="graduation-cap" style="color: rgba(255,255,255,0.7); width: 48px; height: 48px;"></i>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-4 mb-6">
+                <div class="metric-card">
+                    <div>
+                        <p class="metric-label">Média Geral</p>
+                        <p class="metric-value green">8.47</p>
+                    </div>
+                    <i data-lucide="trending-up" style="color: #10b981; width: 28px; height: 28px;"></i>
+                </div>
+
+                <div class="metric-card">
+                    <div>
+                        <p class="metric-label">Frequência</p>
+                        <p class="metric-value blue">95%</p>
+                    </div>
+                    <i data-lucide="clock" style="color: #3b82f6; width: 28px; height: 28px;"></i>
+                </div>
+
+                <div class="metric-card">
+                    <div>
+                        <p class="metric-label">Situação</p>
+                        <p class="metric-value green">Ativo</p>
+                    </div>
+                    <i data-lucide="check-circle" style="color: #10b981; width: 28px; height: 28px;"></i>
+                </div>
+
+                <div class="metric-card">
+                    <div>
+                        <p class="metric-label">Pendências</p>
+                        <p class="metric-value orange">1</p>
+                    </div>
+                    <i data-lucide="alert-circle" style="color: #f59e0b; width: 28px; height: 28px;"></i>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2">
+                <div class="card">
+                    <div class="card-header">
+                        <i data-lucide="calendar" style="color: #667eea;"></i>
+                        <h3 class="card-title">Próximos Eventos</h3>
+                    </div>
+                    <div class="event-list">
+                        <div class="event-item">
+                            <div class="event-info">
+                                <p class="event-title">Prova de Administração Geral</p>
+                                <p class="event-date">25/10/2025</p>
+                            </div>
+                            <span class="badge danger">PROVA</span>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-info">
+                                <p class="event-title">Entrega Projeto Marketing</p>
+                                <p class="event-date">30/10/2025</p>
+                            </div>
+                            <span class="badge warning">PROJETO</span>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-info">
+                                <p class="event-title">Semana da Administração</p>
+                                <p class="event-date">05/11/2025</p>
+                            </div>
+                            <span class="badge info">EVENTO</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <i data-lucide="dollar-sign" style="color: #10b981;"></i>
+                        <h3 class="card-title">Situação Financeira</h3>
+                    </div>
+                    <div class="event-list">
+                        <div class="event-item">
+                            <div class="event-info">
+                                <p class="event-title">Setembro 2025</p>
+                                <p class="event-date">R$ 450,00</p>
+                            </div>
+                            <span class="badge success">PAGO</span>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-info">
+                                <p class="event-title">Outubro 2025</p>
+                                <p class="event-date">R$ 450,00</p>
+                            </div>
+                            <span class="badge danger">PENDENTE</span>
+                        </div>
+                        <div style="text-align: center; margin-top: 1rem;">
+                            <button class="btn btn-primary" onclick="alert('Redirecionando para pagamento...')">
+                                <i data-lucide="credit-card"></i>
+                                Pagar Agora
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Profile Section -->
+        <section id="perfil" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <i data-lucide="user" style="color: #667eea;"></i>
+                    <h2 class="card-title">Dados Pessoais</h2>
+                </div>
+                
+                <div class="profile-photo">
+                    <div class="photo-container">
+                        <img src="https://i.imgur.com/m5ZqvEh.jpeg" alt="Foto do perfil">
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Nome Completo</label>
+                        <input type="text" class="form-input" value="TAYNA QUERO DA SILVA" disabled>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">CPF</label>
+                        <input type="text" class="form-input" value="466.328.568-71" disabled>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">RG</label>
+                        <input type="text" class="form-input" value="42.605.655-5" disabled>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Data de Nascimento</label>
+                        <input type="date" class="form-input" value="1997-01-15" disabled>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Telefone</label>
+                        <input type="text" class="form-input" value="(16) 99265-5533" disabled>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">E-mail</label>
+                        <input type="email" class="form-input" value="tayquero10@gmail.com" disabled>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label">Endereço</label>
+                        <input type="text" class="form-input" value="R RAY WESLEY HERRICK, 5441 - BL 11 AP 101 - JD EMBARE, SAO CARLOS-SP" disabled>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">CEP</label>
+                        <input type="text" class="form-input" value="13564-220" disabled>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Matrícula</label>
+                        <input type="text" class="form-input" value="RA16595598" disabled>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Grades Section -->
+        <section id="notas" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <i data-lucide="book-open" style="color: #667eea;"></i>
+                    <h2 class="card-title">Boletim Escolar</h2>
+                </div>
+                
+                <div class="notes-summary">
+                    <div class="grid">
+                        <div class="text-center">
+                            <p class="text-lg font-semibold" style="color: #2563eb;">Média Geral</p>
+                            <p class="text-3xl font-bold" style="color: #1e3a8a;">8.47</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-lg font-semibold" style="color: #059669;">Disciplinas Aprovadas</p>
+                            <p class="text-3xl font-bold" style="color: #14532d;">6/6</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-lg font-semibold" style="color: #6b7280;">Situação</p>
+                            <p class="text-3xl font-bold" style="color: #14532d;">Aprovado</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Disciplina</th>
+                                <th class="text-center">1ª Nota</th>
+                                <th class="text-center">2ª Nota</th>
+                                <th class="text-center">Média</th>
+                                <th class="text-center">Situação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="font-semibold">Administração Geral</td>
+                                <td class="text-center">8.5</td>
+                                <td class="text-center">9.0</td>
+                                <td class="text-center font-semibold">8.75</td>
+                                <td class="text-center"><span class="badge success">Aprovado</span></td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">Contabilidade</td>
+                                <td class="text-center">7.8</td>
+                                <td class="text-center">8.2</td>
+                                <td class="text-center font-semibold">8.00</td>
+                                <td class="text-center"><span class="badge success">Aprovado</span></td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">Recursos Humanos</td>
+                                <td class="text-center">9.1</td>
+                                <td class="text-center">8.7</td>
+                                <td class="text-center font-semibold">8.90</td>
+                                <td class="text-center"><span class="badge success">Aprovado</span></td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">Marketing</td>
+                                <td class="text-center">7.5</td>
+                                <td class="text-center">8.8</td>
+                                <td class="text-center font-semibold">8.15</td>
+                                <td class="text-center"><span class="badge success">Aprovado</span></td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">Gestão Financeira</td>
+                                <td class="text-center">8.9</td>
+                                <td class="text-center">9.2</td>
+                                <td class="text-center font-semibold">9.05</td>
+                                <td class="text-center"><span class="badge success">Aprovado</span></td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">Empreendedorismo</td>
+                                <td class="text-center">8.0</td>
+                                <td class="text-center">7.9</td>
+                                <td class="text-center font-semibold">7.95</td>
+                                <td class="text-center"><span class="badge success">Aprovado</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-6" style="text-align: center;">
+                    <button class="btn btn-primary" onclick="alert('Baixando boletim...')">
+                        <i data-lucide="download"></i>
+                        Baixar Boletim
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Financial Section -->
+        <section id="financeiro" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <i data-lucide="credit-card" style="color: #667eea;"></i>
+                    <h2 class="card-title">Situação Financeira</h2>
+                </div>
+                
+                <div class="financial-summary">
+                    <div class="summary-card green">
+                        <p class="summary-label green">Total Pago</p>
+                        <p class="summary-value green">R$ 4.050,00</p>
+                    </div>
+                    <div class="summary-card red">
+                        <p class="summary-label red">Em Aberto</p>
+                        <p class="summary-value red">R$ 450,00</p>
+                    </div>
+                    <div class="summary-card blue">
+                        <p class="summary-label blue">Valor Mensal</p>
+                        <p class="summary-value blue">R$ 450,00</p>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Mês</th>
+                                <th class="text-center">Valor</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center">Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="font-semibold">Janeiro 2025</td>
+                                <td class="text-center">R$ 450,00</td>
+                                <td class="text-center"><span class="badge success">Pago</span></td>
+                                <td class="text-center"><button class="btn btn-secondary text-xs" onclick="alert('Baixando comprovante...')">Comprovante</button></td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">Fevereiro 2025</td>
+                                <td class="text-center">R$ 450,00</td>
+                                <td class="text-center"><span class="badge success">Pago</span></td>
+                                <td class="text-center"><button class="btn btn-secondary text-xs" onclick="alert('Baixando comprovante...')">Comprovante</button></td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">Março 2025</td>
+                                <td class="text-center">R$ 450,00</td>
+                                <td class="text-center"><span class="badge success">Pago</span></td>
+                                <td class="text-center"><button class="btn btn-secondary text-xs" onclick="alert('Baixando comprovante...')">Comprovante</button></td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">Abril 2025</td>
+                                <td class="text-center">R$ 450,00</td>
+                                <td class="text-center"><span class="badge success">Pago</span></td>
+                                <td class="text-center"><button class="btn btn-secondary text-xs" onclick="alert('Baixando comprovante...')">Comprovante</button></td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">Maio 2025</td>
+                                <td class="text-center">R$ 450,00</td>
+                                <td class="text-center"><span class="badge success">Pago</span></td>
+                                <td class="text-center"><button class="btn btn-secondary text-xs" onclick="alert('Baixando comprovante...')">Comprovante</button></td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">Junho 2025</td>
+                                <td class="text-center">R$ 450,00</td>
+                                <td class="text-center"><span class="badge success">Pago</span></td>
+                                <td class="text-center"><button class="btn btn-secondary text-xs" onclick="alert('Baixando comprovante...')">Comprovante</button></td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">Julho 2025</td>
+                                <td class="text-center">R$ 450,00</td>
+                                <td class="text-center"><span class="badge success">Pago</span></td>
+                                <td class="text-center"><button class="btn btn-secondary text-xs" onclick="alert('Baixando comprovante...')">Comprovante</button></td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">Agosto 2025</td>
+                                <td class="text-center">R$ 450,00</td>
+                                <td class="text-center"><span class="badge success">Pago</span></td>
+                                <td class="text-center"><button class="btn btn-secondary text-xs" onclick="alert('Baixando comprovante...')">Comprovante</button></td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">Setembro 2025</td>
+                                <td class="text-center">R$ 450,00</td>
+                                <td class="text-center"><span class="badge success">Pago</span></td>
+                                <td class="text-center"><button class="btn btn-secondary text-xs" onclick="alert('Baixando comprovante...')">Comprovante</button></td>
+                            </tr>
+                            <tr style="background: rgba(239, 68, 68, 0.05);">
+                                <td class="font-semibold">Outubro 2025</td>
+                                <td class="text-center">R$ 450,00</td>
+                                <td class="text-center"><span class="badge danger">Pendente</span></td>
+                                <td class="text-center"><button class="btn btn-primary text-xs" onclick="alert('Redirecionando para pagamento...')">Pagar</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Calendar Section -->
+        <section id="calendario" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <i data-lucide="calendar" style="color: #667eea;"></i>
+                    <h2 class="card-title">Calendário Acadêmico</h2>
+                </div>
+                
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-4">📅 Próximos Eventos</h3>
+                    <div class="event-list">
+                        <div class="event-item">
+                            <div class="event-info">
+                                <p class="event-title">Prova de Administração Geral</p>
+                                <p class="event-date">25/10/2025 - 19:00h</p>
+                            </div>
+                            <span class="badge danger">PROVA</span>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-info">
+                                <p class="event-title">Entrega Projeto Marketing</p>
+                                <p class="event-date">30/10/2025 - 23:59h</p>
+                            </div>
+                            <span class="badge warning">PROJETO</span>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-info">
+                                <p class="event-title">Semana da Administração</p>
+                                <p class="event-date">05/11/2025 - 08:00h</p>
+                            </div>
+                            <span class="badge info">EVENTO</span>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-info">
+                                <p class="event-title">Prova de Contabilidade</p>
+                                <p class="event-date">12/11/2025 - 19:00h</p>
+                            </div>
+                            <span class="badge danger">PROVA</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">📚 Horário de Aulas</h3>
+                    <div class="table-container">
+                        <table class="table schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>Horário</th>
+                                    <th>Segunda</th>
+                                    <th>Terça</th>
+                                    <th>Quarta</th>
+                                    <th>Quinta</th>
+                                    <th>Sexta</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="font-semibold">19:00-20:30</td>
+                                    <td>Adm. Geral</td>
+                                    <td>Contabilidade</td>
+                                    <td>RH</td>
+                                    <td>Marketing</td>
+                                    <td style="color: #9ca3af;">-</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-semibold">20:30-22:00</td>
+                                    <td>Gest. Financeira</td>
+                                    <td>Empreend.</td>
+                                    <td>Contabilidade</td>
+                                    <td>RH</td>
+                                    <td style="color: #9ca3af;">-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Library Section -->
+        <section id="biblioteca" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <i data-lucide="library" style="color: #667eea;"></i>
+                    <h2 class="card-title">Biblioteca Digital</h2>
+                </div>
+                
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="Buscar materiais...">
+                    <i data-lucide="search" class="search-icon"></i>
+                </div>
+
+                <div class="library-grid">
+                    <div class="material-card">
+                        <div class="material-header">
+                            <i data-lucide="file-text" style="color: #ef4444; width: 24px; height: 24px;"></i>
+                            <span class="material-type">PDF</span>
+                        </div>
+                        <h3 class="material-title">Princípios de Administração</h3>
+                        <p class="material-author">Henri Fayol</p>
+                        <p class="material-subject">Administração Geral</p>
+                        <button class="btn btn-primary w-full" onclick="alert('Download iniciado!')">
+                            <i data-lucide="download"></i>
+                            Baixar Material
+                        </button>
+                    </div>
+
+                    <div class="material-card">
+                        <div class="material-header">
+                            <i data-lucide="file-text" style="color: #ef4444; width: 24px; height: 24px;"></i>
+                            <span class="material-type">PDF</span>
+                        </div>
+                        <h3 class="material-title">Contabilidade Básica</h3>
+                        <p class="material-author">José Carlos Marion</p>
+                        <p class="material-subject">Contabilidade</p>
+                        <button class="btn btn-primary w-full" onclick="alert('Download iniciado!')">
+                            <i data-lucide="download"></i>
+                            Baixar Material
+                        </button>
+                    </div>
+
+                    <div class="material-card">
+                        <div class="material-header">
+                            <i data-lucide="file-text" style="color: #ef4444; width: 24px; height: 24px;"></i>
+                            <span class="material-type">PDF</span>
+                        </div>
+                        <h3 class="material-title">Gestão de Pessoas</h3>
+                        <p class="material-author">Idalberto Chiavenato</p>
+                        <p class="material-subject">Recursos Humanos</p>
+                        <button class="btn btn-primary w-full" onclick="alert('Download iniciado!')">
+                            <i data-lucide="download"></i>
+                            Baixar Material
+                        </button>
+                    </div>
+
+                    <div class="material-card">
+                        <div class="material-header">
+                            <i data-lucide="file-text" style="color: #ef4444; width: 24px; height: 24px;"></i>
+                            <span class="material-type">PDF</span>
+                        </div>
+                        <h3 class="material-title">Marketing 4.0</h3>
+                        <p class="material-author">Philip Kotler</p>
+                        <p class="material-subject">Marketing</p>
+                        <button class="btn btn-primary w-full" onclick="alert('Download iniciado!')">
+                            <i data-lucide="download"></i>
+                            Baixar Material
+                        </button>
+                    </div>
+
+                    <div class="material-card">
+                        <div class="material-header">
+                            <i data-lucide="file-text" style="color: #ef4444; width: 24px; height: 24px;"></i>
+                            <span class="material-type">PDF</span>
+                        </div>
+                        <h3 class="material-title">Administração Financeira</h3>
+                        <p class="material-author">Alexandre Assaf Neto</p>
+                        <p class="material-subject">Gestão Financeira</p>
+                        <button class="btn btn-primary w-full" onclick="alert('Download iniciado!')">
+                            <i data-lucide="download"></i>
+                            Baixar Material
+                        </button>
+                    </div>
+
+                    <div class="material-card">
+                        <div class="material-header">
+                            <i data-lucide="file-text" style="color: #ef4444; width: 24px; height: 24px;"></i>
+                            <span class="material-type">PDF</span>
+                        </div>
+                        <h3 class="material-title">O Segredo de Luísa</h3>
+                        <p class="material-author">Fernando Dolabela</p>
+                        <p class="material-subject">Empreendedorismo</p>
+                        <button class="btn btn-primary w-full" onclick="alert('Download iniciado!')">
+                            <i data-lucide="download"></i>
+                            Baixar Material
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Support Section -->
+        <section id="suporte" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <i data-lucide="headphones" style="color: #667eea;"></i>
+                    <h2 class="card-title">Suporte ao Aluno</h2>
+                </div>
+                
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-4">📞 Canais de Atendimento</h3>
+                    <div class="contact-list">
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i data-lucide="mail" style="color: #3b82f6; width: 24px; height: 24px;"></i>
+                            </div>
+                            <div>
+                                <p class="contact-title">E-mail</p>
+                                <p class="contact-detail">suporte@fiap.com.br</p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i data-lucide="phone" style="color: #10b981; width: 24px; height: 24px;"></i>
+                            </div>
+                            <div>
+                                <p class="contact-title">Telefone</p>
+                                <p class="contact-detail">(11) 3385-8010</p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i data-lucide="map-pin" style="color: #ef4444; width: 24px; height: 24px;"></i>
+                            </div>
+                            <div>
+                                <p class="contact-title">Presencial</p>
+                                <p class="contact-detail">Secretaria - Sala 101</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <h4 class="font-semibold mb-3">⏰ Horários de Atendimento</h4>
+                        <div class="text-sm" style="color: #6b7280; line-height: 1.8;">
+                            <p>Segunda a Sexta: 08h às 22h</p>
+                            <p>Sábado: 08h às 17h</p>
+                            <p>Domingo: Fechado</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-4">💬 Enviar Mensagem</h3>
+                    <div class="space-y-4">
+                        <div class="form-group">
+                            <label class="form-label">Assunto</label>
+                            <select class="form-input" style="background: white; cursor: pointer;">
+                                <option>Selecione um assunto</option>
+                                <option>Dúvidas sobre notas</option>
+                                <option>Questões financeiras</option>
+                                <option>Problemas técnicos</option>
+                                <option>Solicitação de documentos</option>
+                                <option>Outros</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Mensagem</label>
+                            <textarea
+                                rows="4"
+                                placeholder="Descreva sua solicitação..."
+                                class="form-input"
+                                style="background: white; cursor: text; resize: vertical;"
+                            ></textarea>
+                        </div>
+                        
+                        <button class="btn btn-primary w-full" onclick="alert('Mensagem enviada com sucesso! 📩')">
+                            <i data-lucide="send"></i>
+                            Enviar Mensagem
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">❓ Perguntas Frequentes</h3>
+                    <div class="faq-list">
+                        <div class="faq-item" onclick="alert('Como consultar minhas notas?\n\nAcesse a aba Notas no menu inferior ou clique no menu lateral Notas. Lá você encontrará seu boletim completo com todas as disciplinas, notas e médias.')">
+                            <p class="faq-question">Como consultar minhas notas?</p>
+                        </div>
+                        <div class="faq-item" onclick="alert('Como gerar segunda via do boleto?\n\nVá até a seção Financeiro, encontre o mês desejado e clique no botão Pagar para gerar uma nova via do boleto.')">
+                            <p class="faq-question">Como gerar segunda via do boleto?</p>
+                        </div>
+                        <div class="faq-item" onclick="alert('Qual o prazo para entrega de trabalhos?\n\nO prazo varia por disciplina. Consulte o Calendário Acadêmico para ver todas as datas importantes de entregas e provas.')">
+                            <p class="faq-question">Qual o prazo para entrega de trabalhos?</p>
+                        </div>
+                        <div class="faq-item" onclick="alert('Como solicitar declaração de matrícula?\n\nEntre em contato com a secretaria presencialmente na Sala 101 ou envie um e-mail para suporte@fiap.com.br solicitando o documento.')">
+                            <p class="faq-question">Como solicitar declaração de matrícula?</p>
+                        </div>
+                        <div class="faq-item" onclick="alert('Como acessar os materiais de estudo?\n\nVá até a seção Biblioteca Digital no menu. Lá você encontrará todos os materiais organizados por disciplina para download.')">
+                            <p class="faq-question">Como acessar os materiais de estudo?</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Navigation functionality
+        function showSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => section.classList.remove('active'));
+
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+
+            // Update mobile navigation active state
+            const mobileNavItems = document.querySelectorAll('.mobile-nav .nav-item');
+            mobileNavItems.forEach(item => item.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update desktop navigation active state
+            const desktopNavLinks = document.querySelectorAll('.desktop-nav-link');
+            desktopNavLinks.forEach(link => link.classList.remove('active'));
+            const clickedButton = event.target.closest('button');
+            if (clickedButton) {
+                clickedButton.classList.add('active');
+            }
+
+            // Scroll to top smoothly
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set initial active state
+            const dashboardSection = document.getElementById('dashboard');
+            dashboardSection.classList.add('active');
+
+            // Initialize icons
+            lucide.createIcons();
+
+            // Add touch feedback for mobile
+            if ('ontouchstart' in window) {
+                document.body.classList.add('touch-device');
+            }
+        });
+
+        // Add loading states for buttons
+        function addLoadingState(button) {
+            const originalContent = button.innerHTML;
+            button.innerHTML = '<div class="loading"></div> Carregando...';
+            button.disabled = true;
+            
+            setTimeout(() => {
+                button.innerHTML = originalContent;
+                button.disabled = false;
+            }, 1500);
+        }
+
+        // Enhanced button interactions
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('btn-primary') && !e.target.classList.contains('nav-item')) {
+                addLoadingState(e.target);
+            }
+        });
+
+        // Smooth animations for cards
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all cards for animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card, .metric-card, .material-card');
+            cards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(card);
+            });
+        });
+
+        // Enhanced search functionality
+        document.querySelector('.search-input')?.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const materialCards = document.querySelectorAll('.material-card');
+            
+            materialCards.forEach(card => {
+                const title = card.querySelector('.material-title').textContent.toLowerCase();
+                const author = card.querySelector('.material-author').textContent.toLowerCase();
+                const subject = card.querySelector('.material-subject').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || author.includes(searchTerm) || subject.includes(searchTerm)) {
+                    card.style.display = 'block';
+                    card.style.animation = 'fadeIn 0.3s ease';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Notification click handler
+        document.querySelector('.notification-btn')?.addEventListener('click', function() {
+            alert('🔔 Notificações:\n\n• Prova de Administração Geral em 6 dias\n• Mensalidade de Outubro pendente\n• Novo material disponível na biblioteca');
+        });
+
+        // User avatar click handler
+        document.querySelector('.user-avatar')?.addEventListener('click', function() {
+            showSection('perfil');
+        });
+
+        // Add haptic feedback for touch devices
+        if ('vibrate' in navigator) {
+            document.addEventListener('touchstart', function(e) {
+                if (e.target.classList.contains('btn') || e.target.classList.contains('nav-item')) {
+                    navigator.vibrate(10);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
